@@ -271,22 +271,75 @@ body {
   border-radius: 10px;
 }
 
+/* --- Attendance & Bulk Shared --- */
+.bulk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.bulk-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.bulk-date-pick input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color-scheme: dark;
+}
+
+.bulk-stats-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.bulk-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.bulk-stat-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.dot-total { background: var(--primary); }
+.dot-present { background: var(--success); }
+.dot-absent { background: var(--danger); }
+.dot-pending { background: var(--text-muted); }
+
+.bulk-section-label {
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  margin-top: 24px;
+  font-weight: 600;
+}
+
 /* Lists */
 .att-row, .bulk-row {
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-light);
-  border-radius: 16px;
-  margin-bottom: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-light);
   transition: all 0.3s ease;
 }
+.bulk-list .bulk-row:last-child {
+  border-bottom: none;
+}
 .att-row:hover, .bulk-row:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
-  transform: scale(1.01);
+  background: rgba(255, 255, 255, 0.02);
+  transform: translateX(4px);
 }
 
 .att-avatar, .bulk-avatar {
@@ -444,6 +497,15 @@ body {
   border-color: var(--primary);
   box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
   background: rgba(0, 0, 0, 0.4);
+}
+
+/* Calendar Icon specific fix for Chrome/Edge */
+::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 8px;
+    opacity: 0.8;
 }
 
 /* Filter Bar */
