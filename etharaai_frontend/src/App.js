@@ -18,7 +18,11 @@ function App() {
           <Route path="/attendance" element={<AttendancePage />} />
         </Route>
       </Routes>
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+      />
     </BrowserRouter>
   );
 }
