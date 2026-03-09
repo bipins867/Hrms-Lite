@@ -44,7 +44,7 @@ EtharaAi/
     ├── public/
     ├── src/
     │   ├── api/                  # Axios service modules
-    │   │   ├── axiosInstance.js   # Configured Axios instance
+    │   │   ├── axiosInstance.js   # Configured Axios instance.
     │   │   ├── employees.js      # Employee API calls
     │   │   ├── attendance.js     # Attendance API calls
     │   │   └── dashboard.js      # Dashboard API calls
