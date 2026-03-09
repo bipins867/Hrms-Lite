@@ -3,18 +3,30 @@ import { FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { getAttendanceByEmployee } from "../../api/attendance";
 
 const AVATAR_COLORS = [
-  "#4f46e5", "#059669", "#d97706", "#dc2626",
-  "#7c3aed", "#0891b2", "#be185d", "#65a30d",
+  "#4f46e5",
+  "#059669",
+  "#d97706",
+  "#dc2626",
+  "#7c3aed",
+  "#0891b2",
+  "#be185d",
+  "#65a30d",
 ];
 
 function pickColor(str) {
   let hash = 0;
-  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  for (let i = 0; i < str.length; i++)
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 }
 
 function getInitials(name) {
-  return name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
+  return name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 }
 
 export default function AttendanceForm({ employees, onSubmit }) {
@@ -22,6 +34,7 @@ export default function AttendanceForm({ employees, onSubmit }) {
   const [selectedDate, setSelectedDate] = useState(today);
   const [dayRecords, setDayRecords] = useState({});
   const [saving, setSaving] = useState({});
+  const [activeTab, setActiveTab] = useState("pending"); // 'pending' or 'done'
 
   const fetchDayRecords = useCallback(async () => {
     if (!selectedDate || employees.length === 0) return;
@@ -30,7 +43,10 @@ export default function AttendanceForm({ employees, onSubmit }) {
       const map = {};
       for (const emp of employees) {
         try {
-          const res = await getAttendanceByEmployee(emp.employee_id, selectedDate);
+          const res = await getAttendanceByEmployee(
+            emp.employee_id,
+            selectedDate,
+          );
           if (res.data.length > 0) {
             map[emp.employee_id] = res.data[0].status;
           }
@@ -44,7 +60,9 @@ export default function AttendanceForm({ employees, onSubmit }) {
     }
   }, [selectedDate, employees]);
 
-  useEffect(() => { fetchDayRecords(); }, [fetchDayRecords]);
+  useEffect(() => {
+    fetchDayRecords();
+  }, [fetchDayRecords]);
 
   const handleMark = async (employeeId, status) => {
     setSaving((prev) => ({ ...prev, [employeeId]: true }));
@@ -79,11 +97,13 @@ export default function AttendanceForm({ employees, onSubmit }) {
         </span>
         <span className="bulk-stat">
           <span className="bulk-stat-dot dot-present" />
-          {Object.values(dayRecords).filter((s) => s === "Present").length} Present
+          {Object.values(dayRecords).filter((s) => s === "Present").length}{" "}
+          Present
         </span>
         <span className="bulk-stat">
           <span className="bulk-stat-dot dot-absent" />
-          {Object.values(dayRecords).filter((s) => s === "Absent").length} Absent
+          {Object.values(dayRecords).filter((s) => s === "Absent").length}{" "}
+          Absent
         </span>
         <span className="bulk-stat">
           <span className="bulk-stat-dot dot-pending" />
@@ -95,19 +115,79 @@ export default function AttendanceForm({ employees, onSubmit }) {
         <p className="bulk-empty">No employees found. Add employees first.</p>
       ) : (
         <div className="bulk-list">
-          {unmarked.length > 0 && (
+          <div
+            className="tabs"
+            style={{
+              display: "flex",
+              gap: "24px",
+              marginBottom: "24px",
+              borderBottom: "1px solid var(--border-light)",
+            }}
+          >
+            <button
+              onClick={() => setActiveTab("pending")}
+              style={{
+                background: "transparent",
+                border: "none",
+                padding: "12px 0",
+                fontSize: "1rem",
+                fontWeight: 600,
+                cursor: "pointer",
+                color:
+                  activeTab === "pending"
+                    ? "var(--primary)"
+                    : "var(--text-muted)",
+                borderBottom:
+                  activeTab === "pending"
+                    ? "2px solid var(--primary)"
+                    : "2px solid transparent",
+                marginBottom: "-1px",
+              }}
+            >
+              Not Yet Marked ({unmarked.length})
+            </button>
+            <button
+              onClick={() => setActiveTab("done")}
+              style={{
+                background: "transparent",
+                border: "none",
+                padding: "12px 0",
+                fontSize: "1rem",
+                fontWeight: 600,
+                cursor: "pointer",
+                color:
+                  activeTab === "done" ? "var(--primary)" : "var(--text-muted)",
+                borderBottom:
+                  activeTab === "done"
+                    ? "2px solid var(--primary)"
+                    : "2px solid transparent",
+                marginBottom: "-1px",
+              }}
+            >
+              Already Marked ({marked.length})
+            </button>
+          </div>
+
+          {activeTab === "pending" && unmarked.length > 0 && (
             <>
-              <div className="bulk-section-label">Not yet marked</div>
               {unmarked.map((emp) => (
                 <div key={emp.employee_id} className="bulk-row">
-                  <div className="bulk-avatar" style={{ background: pickColor(emp.full_name) }}>
+                  <div
+                    className="bulk-avatar"
+                    style={{ background: pickColor(emp.full_name) }}
+                  >
                     {getInitials(emp.full_name)}
                   </div>
                   <div className="bulk-emp-info">
                     <span className="bulk-emp-name">{emp.full_name}</span>
-                    <span className="bulk-emp-meta">{emp.employee_id} &middot; {emp.department}</span>
+                    <span className="bulk-emp-meta">
+                      {emp.employee_id} &middot; {emp.department}
+                    </span>
                   </div>
-                  <div className="bulk-actions">
+                  <div
+                    className="bulk-actions"
+                    style={{ display: "flex", gap: "16px" }}
+                  >
                     <button
                       className="bulk-btn bulk-btn-present"
                       disabled={saving[emp.employee_id]}
@@ -127,28 +207,50 @@ export default function AttendanceForm({ employees, onSubmit }) {
               ))}
             </>
           )}
+          {activeTab === "pending" && unmarked.length === 0 && (
+            <p
+              className="bulk-empty"
+              style={{ padding: "24px 0", color: "var(--text-muted)" }}
+            >
+              All employees marked for {selectedDate}.
+            </p>
+          )}
 
-          {marked.length > 0 && (
+          {activeTab === "done" && marked.length > 0 && (
             <>
-              <div className="bulk-section-label">Already marked</div>
               {marked.map((emp) => {
                 const status = dayRecords[emp.employee_id];
                 return (
                   <div key={emp.employee_id} className="bulk-row bulk-row-done">
-                    <div className="bulk-avatar" style={{ background: pickColor(emp.full_name) }}>
+                    <div
+                      className="bulk-avatar"
+                      style={{ background: pickColor(emp.full_name) }}
+                    >
                       {getInitials(emp.full_name)}
                     </div>
                     <div className="bulk-emp-info">
                       <span className="bulk-emp-name">{emp.full_name}</span>
-                      <span className="bulk-emp-meta">{emp.employee_id} &middot; {emp.department}</span>
+                      <span className="bulk-emp-meta">
+                        {emp.employee_id} &middot; {emp.department}
+                      </span>
                     </div>
-                    <span className={`badge badge-${status === "Present" ? "success" : "danger"}`}>
+                    <span
+                      className={`badge badge-${status === "Present" ? "success" : "danger"}`}
+                    >
                       {status}
                     </span>
                   </div>
                 );
               })}
             </>
+          )}
+          {activeTab === "done" && marked.length === 0 && (
+            <p
+              className="bulk-empty"
+              style={{ padding: "24px 0", color: "var(--text-muted)" }}
+            >
+              No employees marked for {selectedDate}.
+            </p>
           )}
         </div>
       )}
