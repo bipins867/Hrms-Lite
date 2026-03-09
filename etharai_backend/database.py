@@ -5,6 +5,7 @@ from pymongo import MongoClient, ASCENDING
 load_dotenv()
 
 MONGO_URL = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+
 DB_NAME = os.getenv("DATABASE_NAME", "hrms_lite")
 
 _client = MongoClient(MONGO_URL)
@@ -12,6 +13,7 @@ _database = _client[DB_NAME]
 
 emp_col = _database["employees"]
 att_col = _database["attendance"]
+
 
 
 def setup_indexes():
