@@ -14,6 +14,7 @@ emp_col = _database["employees"]
 att_col = _database["attendance"]
 
 
+
 def setup_indexes():
     """Ensure unique constraints and compound indexes are in place."""
     emp_col.create_index("employee_id", unique=True)
