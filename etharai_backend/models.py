@@ -13,7 +13,7 @@ class StatusOption(str, Enum):
 
 
 # ---------- request schemas ----------
-
+#-----
 class NewEmployee(BaseModel):
     employee_id: str = Field(
         ..., min_length=1, max_length=20,
@@ -23,12 +23,16 @@ class NewEmployee(BaseModel):
         ..., min_length=1, max_length=100,
         description="Employee full name",
     )
+    
+    
     email: EmailStr = Field(..., description="Work email address")
     department: str = Field(
         ..., min_length=1, max_length=50,
         description="Department the employee belongs to",
     )
 
+    
+    
     @field_validator("employee_id")
     @classmethod
     def clean_employee_id(cls, value: str) -> str:
